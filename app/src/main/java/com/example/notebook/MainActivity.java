@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> subjects;
     private HashMap<String, Boolean> map;
     private List<Homework> list;
-    private List<Homework> AllData;
+    public static List<Homework> AllData;
     private DateData dedline;
     private Button btndedline;
     private Button subjchose;
@@ -113,51 +114,39 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy(){
-        saveData();
+        Intent intent = new Intent(this, saveService.class);
+        startService(intent);
         super.onDestroy();
     }
 
-    public void saveData(){
-        try {
-            FileOutputStream output = openFileOutput("saveData", MODE_PRIVATE);
-            output.write((Integer.toString(AllData.size()) + "\n").getBytes());
-            for (int i = 0; i < AllData.size(); i++) {
-                output.write((AllData.get(i).subj + "\n").getBytes());
-                output.write((Integer.toString(AllData.get(i).date.year) + " " + Integer.toString(AllData.get(i).date.month) + " " + Integer.toString(AllData.get(i).date.day) + "\n").getBytes());
-                output.write("iiiii\n".getBytes());
-                output.write((AllData.get(i).txt + "\n").getBytes());
-                output.write("iiiii\n".getBytes());
-            }
-            output.write("endoffile\n".getBytes());
-            output.close();
-        } catch (FileNotFoundException e){
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     public void readData(){
         try {
             FileInputStream fileinput = openFileInput("saveData");
             InputStreamReader input = new InputStreamReader(fileinput);
             BufferedReader reader = new BufferedReader(input);
-            int sz = Integer.parseInt(reader.readLine());
-            for (int i = 0; i < sz; i++) {
-                String sbj = reader.readLine();
-                String[] datestr = reader.readLine().split(" ");
-                DateData d = new DateData(Integer.parseInt(datestr[1]), Integer.parseInt(datestr[0]), Integer.parseInt(datestr[2]));
-                reader.readLine();
-                String txt = "";
-                String line;
-                while(!((line = reader.readLine()).equals("iiiii"))) {
-                    if (!(line.equals(""))) {
-                        txt += line + "\n";
+            String firstline = reader.readLine();
+            if (firstline == null) {
+                Toast.makeText(this, "Ошибка при загрузке данных", Toast.LENGTH_LONG);
+            } else {
+                int sz = Integer.parseInt(firstline);
+                for (int i = 0; i < sz; i++) {
+                    String sbj = reader.readLine();
+                    String[] datestr = reader.readLine().split(" ");
+                    DateData d = new DateData(Integer.parseInt(datestr[1]), Integer.parseInt(datestr[0]), Integer.parseInt(datestr[2]));
+                    reader.readLine();
+                    String txt = "";
+                    String line;
+                    while (!((line = reader.readLine()).equals("iiiii"))) {
+                        if (!(line.equals(""))) {
+                            txt += line + "\n";
+                        }
                     }
+                    Log.v("sastxt", txt);
+                    Homework hw = new Homework(sbj, txt, d);
+                    AllData.add(hw);
                 }
-                Log.v("sastxt", txt);
-                Homework hw = new Homework(sbj, txt, d);
-                AllData.add(hw);
             }
         } catch (FileNotFoundException e){
             e.printStackTrace();
@@ -273,7 +262,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 map.put(subjects.get(which), isChecked);
-                subjchose.setText(subjects.get(which));
                 updateList();
             }
         });
