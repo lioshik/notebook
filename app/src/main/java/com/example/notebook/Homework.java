@@ -5,7 +5,7 @@ import java.text.DateFormat;
 public class Homework {
     public String subj;
     public String txt;
-    DateData date;
+    public DateData date;
 
     public Homework(String subj, String txt, DateData date){
         this.date = date;
