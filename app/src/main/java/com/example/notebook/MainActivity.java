@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_NEW_HW = 1;
     public static final int REQUEST_CHANGE_HW = 2;
+    public static final int RESULT_NEED_CHANGE = 3;
+    public static final int RESULT_NEED_DELETE = 4;
+    public static final int REQUEST_SEE_MORE_INFO = 5;
 
     private ListView lw;
     private List<String> subjects;
@@ -76,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(MainActivity.this, MoreDetails.class);
                 i.putExtra("txt", list.get(position).txt);
-                startActivity(i);
+                i.putExtra("pos", position);
+                startActivityForResult(i, REQUEST_SEE_MORE_INFO);
             }
         });
         readData();
@@ -118,8 +122,6 @@ public class MainActivity extends AppCompatActivity {
         startService(intent);
         super.onDestroy();
     }
-
-
 
     public void readData(){
         try {
@@ -184,10 +186,22 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_CHANGE_HW:
                 if (resultCode != 0) {
                     AllData.remove(list.get(pos));
-                    list.remove(pos);
                     Homework add = new Homework(data.getStringExtra("subj"), data.getStringExtra("txt"), new DateData(data.getIntExtra("year", 0), data.getIntExtra("month", 0), data.getIntExtra("day", 0)));
                     AllData.add(add);
                     updateList();
+                }
+                break;
+            case REQUEST_SEE_MORE_INFO:
+                switch(resultCode) {
+                    case RESULT_NEED_CHANGE:
+                        pos = data.getIntExtra("pos", 0);
+                        changeItem();
+                        break;
+                    case RESULT_NEED_DELETE:
+                        pos = data.getIntExtra("pos", 0);
+                        AllData.remove(list.get(pos));
+                        updateList();
+                        break;
                 }
         }
     }
@@ -208,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(i, REQUEST_NEW_HW);
     }
 
-    public static int pos;
+    public static int pos; //костыль
     public void choseActionDialog(int p){
         pos = p;
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
@@ -220,30 +234,32 @@ public class MainActivity extends AppCompatActivity {
                 switch(which) {
                     case 0:
                         AllData.remove(list.get(MainActivity.pos));
-                        list.remove(pos);
                         updateList();
                         break;
                     case 1:
-                        Intent i = new Intent(MainActivity.this, new_homework.class);
-                        String[] kostyl = new String[subjects.size()];
-                        for (int j = 0; j < subjects.size(); j++) {
-                            kostyl[j] = subjects.get(j);
-                        }
-                        i.putExtra("Subjects", kostyl);
-                        i.putExtra("RequestCode", REQUEST_CHANGE_HW);
-                        i.putExtra("subj", list.get(MainActivity.pos).subj);
-                        i.putExtra("txt", list.get(MainActivity.pos).txt);
-                        i.putExtra("day", list.get(MainActivity.pos).date.day);
-                        i.putExtra("month", list.get(MainActivity.pos).date.month);
-                        i.putExtra("year", list.get(MainActivity.pos).date.year);
-
-                        startActivityForResult(i, REQUEST_CHANGE_HW);
-
+                        changeItem();
                 }
             }
         });
         android.app.AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void changeItem() {
+        Intent i = new Intent(MainActivity.this, new_homework.class);
+        String[] kostyl = new String[subjects.size()];
+        for (int j = 0; j < subjects.size(); j++) {
+            kostyl[j] = subjects.get(j);
+        }
+        i.putExtra("Subjects", kostyl);
+        i.putExtra("RequestCode", REQUEST_CHANGE_HW);
+        i.putExtra("subj", list.get(MainActivity.pos).subj);
+        i.putExtra("txt", list.get(MainActivity.pos).txt);
+        i.putExtra("day", list.get(MainActivity.pos).date.day);
+        i.putExtra("month", list.get(MainActivity.pos).date.month);
+        i.putExtra("year", list.get(MainActivity.pos).date.year);
+
+        startActivityForResult(i, REQUEST_CHANGE_HW);
     }
 
     private void changeFilter() {

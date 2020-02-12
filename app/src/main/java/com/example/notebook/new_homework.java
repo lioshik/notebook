@@ -53,6 +53,12 @@ public class new_homework extends AppCompatActivity {
             chosendata = new DateData(getIntent().getIntExtra("year", Year), getIntent().getIntExtra("month", Month), getIntent().getIntExtra("day", Date));
             datechose.setText(chosendata.getString());
             subjchose.setText(getIntent().getStringExtra("subj"));
+            for (int j = 0; j < subjects.length; j++) {
+                if (subjects[j].equals(getIntent().getStringExtra("subj"))){
+                    chosensubj = j;
+                    break;
+                }
+            }
         }
 
     }
