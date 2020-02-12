@@ -134,8 +134,9 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < sz; i++) {
                     String sbj = reader.readLine();
                     String[] datestr = reader.readLine().split(" ");
-                    DateData d = new DateData(Integer.parseInt(datestr[1]), Integer.parseInt(datestr[0]), Integer.parseInt(datestr[2]));
+                    DateData d = new DateData(Integer.parseInt(datestr[0]), Integer.parseInt(datestr[1]), Integer.parseInt(datestr[2]));
                     reader.readLine();
+
                     String txt = "";
                     String line;
                     while (!((line = reader.readLine()).equals("iiiii"))) {
