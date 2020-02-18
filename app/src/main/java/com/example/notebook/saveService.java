@@ -40,6 +40,10 @@ public class saveService extends Service {
                 output.write("iiiii\n".getBytes());
                 output.write((MainActivity.AllData.get(i).txt + "\n").getBytes());
                 output.write("iiiii\n".getBytes());
+                output.write((Integer.toString(MainActivity.AllData.get(i).photos.size()) + "\n").getBytes());
+                for (int j = 0; j < MainActivity.AllData.get(i).photos.size(); j++) {
+                    output.write((MainActivity.AllData.get(i).photos.get(j) + "\n").getBytes());
+                }
             }
             output.write("endoffile\n".getBytes());
             output.close();

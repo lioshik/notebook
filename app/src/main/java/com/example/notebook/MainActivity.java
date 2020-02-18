@@ -28,11 +28,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -146,8 +148,12 @@ public class MainActivity extends AppCompatActivity {
                             txt += line + "\n";
                         }
                     }
-                    Log.v("sastxt", txt);
-                    Homework hw = new Homework(sbj, txt, d);
+                    int photocnt = Integer.parseInt(reader.readLine());
+                    String photos[] = new String[photocnt];
+                    for (int j = 0; j < photocnt; j++) {
+                        photos[j] = reader.readLine();
+                    }
+                    Homework hw = new Homework(sbj, txt, d, photos);
                     AllData.add(hw);
                 }
             }
@@ -178,7 +184,9 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_NEW_HW:
                 if (resultCode != 0){
                     DateData retDate = new DateData(data.getIntExtra("year", 0), data.getIntExtra("month", 0), data.getIntExtra("day", 0));
-                    Homework add = new Homework(data.getStringExtra("subj"), data.getStringExtra("txt"), retDate);
+                    String[] photos = data.getStringArrayExtra("photos");
+                    Log.d("sasa", Integer.toString(photos.length));
+                    Homework add = new Homework(data.getStringExtra("subj"), data.getStringExtra("txt"), retDate, photos);
                     AllData.add(add);
                     updateList();
                 }
@@ -186,7 +194,9 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_CHANGE_HW:
                 if (resultCode != 0) {
                     AllData.remove(list.get(pos));
-                    Homework add = new Homework(data.getStringExtra("subj"), data.getStringExtra("txt"), new DateData(data.getIntExtra("year", 0), data.getIntExtra("month", 0), data.getIntExtra("day", 0)));
+                    String[] photos = data.getStringArrayExtra("photos");
+                    Log.d("sasacurnumofphotos", Integer.toString(photos.length));
+                    Homework add = new Homework(data.getStringExtra("subj"), data.getStringExtra("txt"), new DateData(data.getIntExtra("year", 0), data.getIntExtra("month", 0), data.getIntExtra("day", 0)), photos);
                     AllData.add(add);
                     updateList();
                 }
@@ -258,7 +268,11 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("day", list.get(MainActivity.pos).date.day);
         i.putExtra("month", list.get(MainActivity.pos).date.month);
         i.putExtra("year", list.get(MainActivity.pos).date.year);
-
+        String[] kostyl2 = new String[list.get(MainActivity.pos).photos.size()];
+        for (int j = 0; j < list.get(MainActivity.pos).photos.size(); j++) {
+            kostyl2[j] = list.get(MainActivity.pos).photos.get(j);
+        }
+        i.putExtra("photos", kostyl2);
         startActivityForResult(i, REQUEST_CHANGE_HW);
     }
 

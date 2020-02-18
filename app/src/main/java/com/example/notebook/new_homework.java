@@ -1,19 +1,36 @@
 package com.example.notebook;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class new_homework extends AppCompatActivity {
 
@@ -23,6 +40,12 @@ public class new_homework extends AppCompatActivity {
     DateData chosendata;
     int chosensubj;
     Calendar calendar;
+    List<String> photos;
+    ImageButton btnaddphoto;
+    Uri outputFileUri;
+    public static final int REQUEST_PHOTO = 1337;
+    public static final int REQUEST_SHOW_PHOTO = 1432;
+    public static final int REQUEST_CHANGE_PHOTO = 1435;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +59,8 @@ public class new_homework extends AppCompatActivity {
         datechose = (Button)findViewById(R.id.date);
         chosensubj = 0;
         calendar = Calendar.getInstance();
+        photos = new ArrayList<String>();
+        btnaddphoto = (ImageButton)findViewById(R.id.takephotobutton);
 
         int Date = calendar.get(Calendar.DAY_OF_MONTH);
         int Month = calendar.get(Calendar.MONTH);
@@ -44,6 +69,11 @@ public class new_homework extends AppCompatActivity {
 
         if (getIntent().getIntExtra("RequestCode", 0) == MainActivity.REQUEST_CHANGE_HW) {
             txt.setText(getIntent().getStringExtra("txt"));
+            String[] photosar = getIntent().getStringArrayExtra("photos");
+            photos = new ArrayList<String>();
+            for (int i = 0; i < photosar.length; i++) {
+                photos.add(photosar[i]);
+            }
             for (int i = 0; i < subjects.length; i++) {
                 if (getIntent().getStringExtra("subj") == subjects[i]){
                     chosensubj = i;
@@ -64,6 +94,19 @@ public class new_homework extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PHOTO && resultCode == RESULT_OK) {
+            photos.add(outputFileUri.getPath());
+        } else if (requestCode == REQUEST_SHOW_PHOTO && resultCode != 0) {
+            photos = new ArrayList<String>();
+            for (int i = 0; i < data.getStringArrayExtra("photos").length; i++){
+                photos.add(data.getStringArrayExtra("photos")[i]);
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         setResult(0);
         super.onDestroy();
@@ -76,7 +119,13 @@ public class new_homework extends AppCompatActivity {
         i.putExtra("year", chosendata.year);
         i.putExtra("month", chosendata.month);
         i.putExtra("day", chosendata.day);
-        setResult(1, i);
+        String[] photosar = new String[photos.size()];
+        for (int j = 0; j < photos.size(); j++) {
+            photosar[j] = photos.get(j);
+        }
+        Log.d("sasa", photosar.toString());
+        i.putExtra("photos", photosar);
+        setResult(228322, i);
         finish();
     }
 
@@ -119,5 +168,57 @@ public class new_homework extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    public void onclickAddphoto(View v){
+        requestPermissions();
+        try {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File savefile = createImageFile();
+            outputFileUri = Uri.fromFile(savefile);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            startActivityForResult(intent, REQUEST_PHOTO);
+        } catch (ActivityNotFoundException e) {
+            String errorMessage = "Ваше устройство не поддерживает работу с камерой!";
+            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            String errorMessage = "Ошибка при сохранении файла";
+            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+    public void onClickShowPhotos(View v){
+        String[] ret = new String[photos.size()];
+        for(int i = 0; i < photos.size(); i++) {
+            ret[i] = photos.get(i);
+        }
+        Intent i = new Intent(new_homework.this, photos_activity.class);
+        i.putExtra("photos", ret);
+        startActivityForResult(i, REQUEST_SHOW_PHOTO);
+    }
+
+    private void requestPermissions(){
+        int permissionStatusWrite = ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE);
+        int permissionStatusRead = ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE);
+        if (permissionStatusWrite != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE}, 3123);
+        }
+        if (permissionStatusRead != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{READ_EXTERNAL_STORAGE}, 13123);
+        }
+    }
+    public File createImageFile() throws IOException {
+        requestPermissions();
+        String randstr = Integer.toString((int)(Math.random() * 100000000));
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/notebook/");
+        if (!storageDir.exists()) {
+            storageDir.mkdirs();
+        }
+        File image = File.createTempFile(randstr, ".jpeg", storageDir);
+        return image;
+    }
+
 
 }
