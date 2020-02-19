@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private DateData dedline;
     private Button btndedline;
     private Button subjchose;
+    private Button btnremovesubjfilter;
+    private Button btnremovedatefilter;
     private Calendar calendar;
 
     @Override
@@ -65,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         subjects = new ArrayList<String>();
         dedline = new DateData(9999, 10, 10);
         btndedline = (Button)findViewById(R.id.button2);
+        btnremovedatefilter = (Button)findViewById(R.id.removedatefilter);
+        btnremovesubjfilter = (Button)findViewById(R.id.removesubjfilter);
         subjchose = (Button)findViewById(R.id.filter);
         btndedline.setOnClickListener(
                 new View.OnClickListener(){
@@ -124,10 +128,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy(){
+    public void onPause(){
         Intent intent = new Intent(this, saveService.class);
         startService(intent);
-        super.onDestroy();
+        super.onPause();
     }
 
     public void readData(){
@@ -177,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
                         dedline = new DateData(year, month, day);
                         btndedline.setText(dedline.getString());
                         updateList();
+                        btnremovedatefilter.setVisibility(View.VISIBLE);
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
         );
@@ -299,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 map.put(subjects.get(which), isChecked);
                 updateList();
+                btnremovesubjfilter.setVisibility(View.VISIBLE);
             }
         });
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -310,6 +316,21 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public void onClickremovesubjfilter(View v){
+        btnremovesubjfilter.setVisibility(View.INVISIBLE);
+        for (int i = 0; i < subjects.size(); i++) {
+            map.put(subjects.get(i), true);
+        }
+        updateList();
+    }
+
+    public void onClickremovedatefilter(View v) {
+        btnremovedatefilter.setVisibility(View.INVISIBLE);
+        dedline = new DateData(9999, 10, 10);
+        btndedline.setText("дата");
+        updateList();
     }
 
     private void updateList() {

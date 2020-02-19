@@ -21,7 +21,7 @@
 
     <Button
         android:id="@+id/filter"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="35dp"
         android:layout_marginStart="30dp"
         android:layout_marginLeft="30dp"
@@ -35,7 +35,7 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="35dp"
         android:layout_marginStart="30dp"
         android:layout_marginLeft="30dp"
@@ -60,6 +60,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
@@ -68,5 +70,33 @@
         android:text="Фильтры"
         app:layout_constraintStart_toStartOf="@+id/filter"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/removesubjfilter"
+        android:layout_width="47dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="29dp"
+        android:background="@android:color/holo_red_light"
+        android:onClick="onClickremovesubjfilter"
+        android:text="x"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/filter"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/removedatefilter"
+        android:layout_width="47dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/holo_red_light"
+        android:onClick="onClickremovedatefilter"
+        android:text="x"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/filter"
+        app:layout_constraintTop_toBottomOf="@+id/filter" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

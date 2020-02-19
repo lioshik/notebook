@@ -10,17 +10,23 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +38,10 @@ import java.util.List;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class new_homework extends AppCompatActivity {
+public class new_homework extends AppCompatActivity{
 
     Button btnok, btncancel, datechose, subjchose;
+    ImageButton btnshowphoto, btntakephoto;
     TextView txt;
     String[] subjects;
     DateData chosendata;
@@ -51,6 +58,8 @@ public class new_homework extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_homework);
+        btnaddphoto = (ImageButton)findViewById(R.id.takephotobutton);
+        btnshowphoto = (ImageButton)findViewById(R.id.showimagesbutton);
         btnok = (Button)findViewById(R.id.ok);
         txt = (TextView)findViewById(R.id.text);
         btncancel = (Button)findViewById(R.id.cancel);
@@ -90,7 +99,21 @@ public class new_homework extends AppCompatActivity {
                 }
             }
         }
+        KeyboardVisibilityEvent.setEventListener(
+                this,
+                new KeyboardVisibilityEventListener() {
+                    @Override
+                    public void onVisibilityChanged(boolean isOpen) {
+                        if (btnshowphoto.getVisibility() == View.VISIBLE) {
+                            btnshowphoto.setVisibility(View.INVISIBLE);
+                            btnaddphoto.setVisibility(View.INVISIBLE);
+                        } else {
+                            btnshowphoto.setVisibility(View.VISIBLE);
+                            btnaddphoto.setVisibility(View.VISIBLE);
+                        }
+                    }
 
+                });
     }
 
     @Override
