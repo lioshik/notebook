@@ -10,6 +10,7 @@ import android.widget.TextView;
 public class MoreDetails extends AppCompatActivity {
 
     private int pos;
+    String[] photos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +19,7 @@ public class MoreDetails extends AppCompatActivity {
         TextView txt = (TextView)findViewById(R.id.textView);
         pos = getIntent().getIntExtra("pos", 0);
         txt.setText(getIntent().getStringExtra("txt"));
+        photos = getIntent().getStringArrayExtra("photos");
     }
 
     public void onClickBack(View v){
@@ -36,6 +38,12 @@ public class MoreDetails extends AppCompatActivity {
         i.putExtra("pos", pos);
         setResult(MainActivity.RESULT_NEED_DELETE, i);
         finish();
+    }
+
+    public void onClickShowphotos(View v){
+        Intent i = new Intent(this, PhotosShowActivity.class);
+        i.putExtra("photos", photos);
+        startActivity(i);
     }
 
 

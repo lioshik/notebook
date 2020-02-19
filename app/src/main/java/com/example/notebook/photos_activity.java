@@ -21,7 +21,7 @@ public class photos_activity extends AppCompatActivity {
         for (int i = 0; i < getIntent().getStringArrayExtra("photos").length; i++) {
             photos.add(getIntent().getStringArrayExtra("photos")[i]);
         }
-        lw.setAdapter(new photoshowadapter(this));
+        lw.setAdapter(new photosdapter(this));
     }
 
     public void onClickcancel(View v){

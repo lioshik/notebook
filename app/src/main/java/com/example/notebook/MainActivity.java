@@ -82,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(MainActivity.this, MoreDetails.class);
                 i.putExtra("txt", list.get(position).txt);
                 i.putExtra("pos", position);
+                String[] photos = new String[list.get(position).photos.size()];
+                for (int j = 0; j < list.get(position).photos.size(); j++) {
+                    photos[j] = list.get(position).photos.get(j);
+                }
+                i.putExtra("photos", photos);
                 startActivityForResult(i, REQUEST_SEE_MORE_INFO);
             }
         });

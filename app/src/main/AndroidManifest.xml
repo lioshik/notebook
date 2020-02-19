@@ -16,10 +16,16 @@
             android:enabled="true"
             android:exported="true"></service>
 
-        <activity android:name=".MoreDetails" />
-        <activity android:name=".new_homework" />
-        <activity android:name=".photos_activity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MoreDetails"
+            android:screenOrientation="portrait" />
+        <activity android:name=".new_homework"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".photos_activity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".PhotosShowActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
