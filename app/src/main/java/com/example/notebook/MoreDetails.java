@@ -5,18 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class MoreDetails extends AppCompatActivity implements View.OnTouchListener {
+public class MoreDetails extends AppCompatActivity {
 
     private int pos;
     String[] photos;
     ImageButton btnshowphoto;
+    public static ScrollView sc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +30,17 @@ public class MoreDetails extends AppCompatActivity implements View.OnTouchListen
         pos = getIntent().getIntExtra("pos", 0);
         txt.setText(getIntent().getStringExtra("txt"));
         photos = getIntent().getStringArrayExtra("photos");
-        ImageView triger = (ImageView)findViewById(R.id.triger2);
-        ScrollView sc = (ScrollView)findViewById(R.id.scrollView2);
-        sc.setOnTouchListener(this);
-        triger.setOnTouchListener(this);
+        sc = (ScrollView)findViewById(R.id.scrollView2);
+        sc.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if(sc.getScrollY() == 0) {
+                    btnshowphoto.setVisibility(View.VISIBLE);
+                } else {
+                    btnshowphoto.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     public void onClickBack(View v){
@@ -55,24 +65,6 @@ public class MoreDetails extends AppCompatActivity implements View.OnTouchListen
         Intent i = new Intent(this, PhotosShowActivity.class);
         i.putExtra("photos", photos);
         startActivity(i);
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event){
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: // нажатие
-                btnshowphoto.setVisibility(View.INVISIBLE);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                break;
-            case MotionEvent.ACTION_UP:
-                btnshowphoto.setVisibility(View.VISIBLE);
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                btnshowphoto.setVisibility(View.VISIBLE);
-                break;
-        }
-        return true;
     }
 
 }

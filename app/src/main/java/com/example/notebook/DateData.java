@@ -9,6 +9,10 @@ public class DateData {
         this.day = day;
     }
 
+    public boolean equals(DateData d2){
+        return year == d2.year && month == d2.month && day == d2.day;
+    }
+
     public String getString() {
         return Integer.toString(year) + "." + Integer.toString(month + 1) + "." + Integer.toString(day);
     }

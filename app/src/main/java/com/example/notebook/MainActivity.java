@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Homework> list;
     public static List<Homework> AllData;
     private DateData dedline;
+    private final DateData dedlinedefault = new DateData(9999, 10, 10);
     private Button btndedline;
     private Button subjchose;
     private Button btnremovesubjfilter;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         AllData = new ArrayList<Homework>();
         map = new HashMap<String, Boolean>();
         subjects = new ArrayList<String>();
-        dedline = new DateData(9999, 10, 10);
+        dedline = dedlinedefault;
         btndedline = (Button)findViewById(R.id.button2);
         btnremovedatefilter = (Button)findViewById(R.id.removedatefilter);
         btnremovesubjfilter = (Button)findViewById(R.id.removesubjfilter);
@@ -328,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickremovedatefilter(View v) {
         btnremovedatefilter.setVisibility(View.INVISIBLE);
-        dedline = new DateData(9999, 10, 10);
+        dedline = dedlinedefault;
         btndedline.setText("дата");
         updateList();
     }
@@ -336,7 +337,8 @@ public class MainActivity extends AppCompatActivity {
     private void updateList() {
         list.clear();
         for (int i = 0; i < AllData.size(); i++) {
-            if (map.get(AllData.get(i).subj) && dedline.notGreater(AllData.get(i).date)) {
+            Log.d("sas", AllData.get(i).date.getString() + "   " + dedline.getString());
+            if (map.get(AllData.get(i).subj) && (dedline.equals(dedlinedefault) || dedline.equals(AllData.get(i).date))) {
                 list.add(AllData.get(i));
             }
         }
