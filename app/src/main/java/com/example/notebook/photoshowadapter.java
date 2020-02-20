@@ -45,7 +45,7 @@ public class photoshowAdapter extends BaseAdapter {
         }
         ImageView img = (ImageView)view.findViewById(R.id.imgshowphoto);
         File f = new File(getItem(position));
-        Picasso.get().load(f).fit().into(img);
+        Picasso.get().load(f).fit().centerInside().into(img);
         return view;
     }
 }
