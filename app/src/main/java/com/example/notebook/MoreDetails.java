@@ -1,6 +1,7 @@
 package com.example.notebook;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -20,7 +23,6 @@ public class MoreDetails extends AppCompatActivity {
     String[] photos;
     ImageButton btnshowphoto;
     public static ScrollView sc;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +37,29 @@ public class MoreDetails extends AppCompatActivity {
             @Override
             public void onScrollChanged() {
                 if(sc.getScrollY() == 0) {
-                    btnshowphoto.setVisibility(View.VISIBLE);
+                    if (btnshowphoto.getVisibility() == View.INVISIBLE) {
+                        btnshowphoto.setVisibility(View.VISIBLE);
+                        TranslateAnimation animate = new TranslateAnimation(
+                                0,
+                                0,
+                                btnshowphoto.getHeight(),
+                                0);
+                        animate.setDuration(250);
+                        animate.setFillAfter(true);
+                        btnshowphoto.startAnimation(animate);
+                    }
                 } else {
-                    btnshowphoto.setVisibility(View.INVISIBLE);
+                    if (btnshowphoto.getVisibility() == View.VISIBLE) {
+                        btnshowphoto.setVisibility(View.INVISIBLE);
+                        TranslateAnimation animate = new TranslateAnimation(
+                                0,
+                                0,
+                                0,
+                                btnshowphoto.getHeight() + 600);
+                        animate.setDuration(250);
+                        animate.setFillAfter(true);
+                        btnshowphoto.startAnimation(animate);
+                    }
                 }
             }
         });

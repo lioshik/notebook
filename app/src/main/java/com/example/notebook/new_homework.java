@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
@@ -107,9 +108,27 @@ public class new_homework extends AppCompatActivity{
                         if (btnshowphoto.getVisibility() == View.VISIBLE) {
                             btnshowphoto.setVisibility(View.INVISIBLE);
                             btnaddphoto.setVisibility(View.INVISIBLE);
+                            TranslateAnimation animate = new TranslateAnimation(
+                                    0,
+                                    0,
+                                    0,
+                                    btnshowphoto.getHeight() + 600);
+                            animate.setDuration(250);
+                            animate.setFillAfter(true);
+                            btnshowphoto.startAnimation(animate);
+                            btnaddphoto.startAnimation(animate);
                         } else {
                             btnshowphoto.setVisibility(View.VISIBLE);
                             btnaddphoto.setVisibility(View.VISIBLE);
+                            TranslateAnimation animate = new TranslateAnimation(
+                                    0,
+                                    0,
+                                    btnshowphoto.getHeight(),
+                                    0);
+                            animate.setDuration(250);
+                            animate.setFillAfter(true);
+                            btnshowphoto.startAnimation(animate);
+                            btnaddphoto.startAnimation(animate);
                         }
                     }
 
