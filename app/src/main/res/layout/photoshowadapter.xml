@@ -8,5 +8,8 @@
         android:id="@+id/imgshowphoto"
         android:layout_width="match_parent"
         android:layout_height="400dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
         app:srcCompat="@android:color/darker_gray" />
 </LinearLayout>

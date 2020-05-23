@@ -12,9 +12,10 @@ public class PhotosShowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_show);
+        setTitle("Прикреплённые фотографии");
         photos = getIntent().getStringArrayExtra("photos");
         ListView lw = (ListView)findViewById(R.id.photosshowlist);
-        lw.setAdapter(new photoshowAdapter(this, photos));
+        lw.setAdapter(new PhotoShowAdapter(this, photos));
     }
 
     public void onClickback(View v){

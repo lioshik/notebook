@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class MoreDetails extends AppCompatActivity {
+public class MoreDetailsActivity extends AppCompatActivity {
 
     private int pos;
     String[] photos;
@@ -26,6 +26,7 @@ public class MoreDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Подробности");
         setContentView(R.layout.activity_more_details);
         TextView txt = (TextView)findViewById(R.id.textView);
         btnshowphoto = (ImageButton)findViewById(R.id.buttonshowphto);

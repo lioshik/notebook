@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class saveService extends Service {
+public class SaveService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();

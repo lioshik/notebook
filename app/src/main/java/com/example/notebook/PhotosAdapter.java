@@ -13,24 +13,24 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
-public class photosdapter extends BaseAdapter {
+public class PhotosAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private Context context;
-    photosdapter adapter = this;
+    PhotosAdapter adapter = this;
 
-    public photosdapter(Context context) {
+    public PhotosAdapter(Context context) {
         this.context = context;
         layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return photos_activity.photos.size();
+        return Photos_activity.photos.size();
     }
 
     @Override
     public String getItem(int position) {
-        return photos_activity.photos.get(position);
+        return Photos_activity.photos.get(position);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class photosdapter extends BaseAdapter {
                         View parent_row = (View) v.getParent();
                         ListView lv = (ListView) parent_row.getParent();
                         int position = lv.getPositionForView(parent_row);
-                        photos_activity.photos.remove(position);
+                        Photos_activity.photos.remove(position);
                         adapter.notifyDataSetChanged();
                     }
                 }

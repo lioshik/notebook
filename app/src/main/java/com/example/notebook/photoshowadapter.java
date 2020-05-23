@@ -13,11 +13,11 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
-public class photoshowAdapter extends BaseAdapter {
+public class PhotoShowAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     String[] list;
 
-    public photoshowAdapter(Context context, String[] list) {
+    public PhotoShowAdapter(Context context, String[] list) {
         this.list = list;
         layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }

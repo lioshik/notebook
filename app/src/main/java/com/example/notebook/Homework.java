@@ -13,7 +13,7 @@ public class Homework {
     public String subj;
     public String txt;
     public DateData date;
-    public ArrayList<String> photos;
+    public List<String> photos;
 
     public Homework(String subj, String txt, DateData date, String[] photoss){
         this.date = date;

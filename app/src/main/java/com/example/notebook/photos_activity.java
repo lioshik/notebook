@@ -9,19 +9,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-public class photos_activity extends AppCompatActivity {
+public class Photos_activity extends AppCompatActivity {
     public ListView lw;
     public static ArrayList<String> photos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photos_activity);
+        setTitle("Прикреплённые фотографии");
         lw = (ListView)findViewById(R.id.photoslist);
         photos = new ArrayList<String>();
         for (int i = 0; i < getIntent().getStringArrayExtra("photos").length; i++) {
             photos.add(getIntent().getStringArrayExtra("photos")[i]);
         }
-        lw.setAdapter(new photosdapter(this));
+        lw.setAdapter(new PhotosAdapter(this));
     }
 
     public void onClickcancel(View v){

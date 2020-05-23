@@ -7,34 +7,25 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.CallLog;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("Мои задания");
         lw = (ListView) findViewById(R.id.listview);
         list = new ArrayList<Homework>();
         AllData = new ArrayList<Homework>();
@@ -81,10 +73,10 @@ public class MainActivity extends AppCompatActivity {
         );
         calendar = Calendar.getInstance();
 
-        lw.setAdapter(new HomeworkAdapter(this, list));
+        lw.setAdapter(new HomeworkAdapter(MainActivity.this, list));
         lw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(MainActivity.this, MoreDetails.class);
+                Intent i = new Intent(MainActivity.this, MoreDetailsActivity.class);
                 i.putExtra("txt", list.get(position).txt);
                 i.putExtra("pos", position);
                 String[] photos = new String[list.get(position).photos.size()];
@@ -130,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onPause(){
-        Intent intent = new Intent(this, saveService.class);
+        Intent intent = new Intent(this, SaveService.class);
         startService(intent);
         super.onPause();
     }
@@ -167,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     AllData.add(hw);
                 }
             }
-        } catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
@@ -175,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void dateChooseDialog(){
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.AlertDialog,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -232,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickAdd(View v) {
-        Intent i = new Intent(this, new_homework.class);
+        Intent i = new Intent(this, New_homework.class);
         String[] kostyl = new String[subjects.size()];
         for (int j = 0; j < subjects.size(); j++) {
             kostyl[j] = subjects.get(j);
@@ -267,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeItem() {
-        Intent i = new Intent(MainActivity.this, new_homework.class);
+        Intent i = new Intent(MainActivity.this, New_homework.class);
         String[] kostyl = new String[subjects.size()];
         for (int j = 0; j < subjects.size(); j++) {
             kostyl[j] = subjects.get(j);
@@ -288,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeFilter() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialog);
         builder.setTitle("Фильтр");
         boolean[] checkedItems = new boolean[subjects.size()];
         for (int i = 0; i < subjects.size(); i++) {
@@ -312,6 +304,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+            }
+        });
+        builder.setNeutralButton("выделить", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ListView list = ((AlertDialog) dialog).getListView();
+                for (int i = 0; i < list.getCount(); i++) {
+                    list.setItemChecked(i, true);
+                    map.put(subjects.get(i), true);
+                }
+                updateList();
+                btnremovesubjfilter.setVisibility(View.INVISIBLE);
+                changeFilter();
+            }
+        });
+
+        builder.setNegativeButton("убрать", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ListView list = ((AlertDialog) dialog).getListView();
+                for (int i = 0; i < list.getCount(); i++) {
+                    list.setItemChecked(i, false);
+                    map.put(subjects.get(i), false);
+                }
+                updateList();
+                btnremovesubjfilter.setVisibility(View.VISIBLE);
+                changeFilter();
             }
         });
 

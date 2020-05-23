@@ -10,19 +10,16 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +28,6 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -39,7 +35,7 @@ import java.util.List;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class new_homework extends AppCompatActivity{
+public class New_homework extends AppCompatActivity{
 
     Button btnok, btncancel, datechose, subjchose;
     ImageButton btnshowphoto, btntakephoto;
@@ -58,6 +54,7 @@ public class new_homework extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Добавить");
         setContentView(R.layout.activity_new_homework);
         btnaddphoto = (ImageButton)findViewById(R.id.takephotobutton);
         btnshowphoto = (ImageButton)findViewById(R.id.showimagesbutton);
@@ -78,6 +75,7 @@ public class new_homework extends AppCompatActivity{
         chosendata = new DateData(Year, Month, Date);
 
         if (getIntent().getIntExtra("RequestCode", 0) == MainActivity.REQUEST_CHANGE_HW) {
+            setTitle("Изменить");
             txt.setText(getIntent().getStringExtra("txt"));
             String[] photosar = getIntent().getStringArrayExtra("photos");
             photos = new ArrayList<String>();
@@ -185,7 +183,7 @@ public class new_homework extends AppCompatActivity{
     }
 
     public void dateChooseDialog(){
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.AlertDialog,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -198,7 +196,7 @@ public class new_homework extends AppCompatActivity{
     }
 
     public void subjchoseDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialog);
         builder.setTitle("Выберите предмет");
         builder.setItems(subjects, new DialogInterface.OnClickListener() {
             @Override
@@ -236,7 +234,7 @@ public class new_homework extends AppCompatActivity{
         for(int i = 0; i < photos.size(); i++) {
             ret[i] = photos.get(i);
         }
-        Intent i = new Intent(new_homework.this, photos_activity.class);
+        Intent i = new Intent(New_homework.this, Photos_activity.class);
         i.putExtra("photos", ret);
         startActivityForResult(i, REQUEST_SHOW_PHOTO);
     }
