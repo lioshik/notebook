@@ -3,6 +3,7 @@ package com.example.notebook;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -28,8 +29,10 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -137,7 +140,7 @@ public class New_homework extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PHOTO && resultCode == RESULT_OK) {
-            photos.add(outputFileUri.getPath());
+            photos.add(currentPhotoPath);
         } else if (requestCode == REQUEST_SHOW_PHOTO && resultCode != 0) {
             photos = new ArrayList<String>();
             for (int i = 0; i < data.getStringArrayExtra("photos").length; i++){
@@ -145,6 +148,7 @@ public class New_homework extends AppCompatActivity{
             }
         }
     }
+
 
     @Override
     protected void onDestroy() {
@@ -212,9 +216,9 @@ public class New_homework extends AppCompatActivity{
     public void onclickAddphoto(View v){
         requestPermissions();
         try {
+            File saveFile = createImageFile();
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            File savefile = createImageFile();
-            outputFileUri = Uri.fromFile(savefile);
+            outputFileUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", saveFile);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
             startActivityForResult(intent, REQUEST_PHOTO);
         } catch (ActivityNotFoundException e) {
@@ -227,6 +231,21 @@ public class New_homework extends AppCompatActivity{
             Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
             toast.show();
         }
+    }
+
+    String currentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     public void onClickShowPhotos(View v){
@@ -248,16 +267,6 @@ public class New_homework extends AppCompatActivity{
         if (permissionStatusRead != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{READ_EXTERNAL_STORAGE}, 13123);
         }
-    }
-    public File createImageFile() throws IOException {
-        requestPermissions();
-        String randstr = Integer.toString((int)(Math.random() * 100000000));
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/notebook/");
-        if (!storageDir.exists()) {
-            storageDir.mkdirs();
-        }
-        File image = File.createTempFile(randstr, ".jpeg", storageDir);
-        return image;
     }
 
 
