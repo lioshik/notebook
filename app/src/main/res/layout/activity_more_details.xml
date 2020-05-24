@@ -9,16 +9,14 @@
 
     <Button
         android:id="@+id/back"
-        android:layout_width="98dp"
+        android:layout_width="wrap_content"
         android:layout_height="44dp"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginTop="30dp"
         android:background="@android:color/holo_green_dark"
         android:onClick="onClickBack"
         android:text="Назад"
         android:textSize="20sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,10 +55,9 @@
 
     <Button
         android:id="@+id/del"
-        android:layout_width="98dp"
+        android:layout_width="wrap_content"
         android:layout_height="44dp"
         android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="30dp"
         android:background="@android:color/holo_red_light"
         android:onClick="onClickDelete"
@@ -71,10 +68,9 @@
 
     <Button
         android:id="@+id/change"
-        android:layout_width="98dp"
+        android:layout_width="wrap_content"
         android:layout_height="44dp"
         android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="30dp"
         android:background="@android:color/holo_orange_dark"
         android:onClick="onClickChange"
