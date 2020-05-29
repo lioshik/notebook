@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Список предметов"
+        android:id="@+id/menu_subj_list"></item>
+
+    <item android:title="Push-уведомления"
+        android:id="@+id/menu_push_button"></item>
+
+    <item android:title="Выйти"
+        android:id="@+id/menu_exit"></item>
+</menu>

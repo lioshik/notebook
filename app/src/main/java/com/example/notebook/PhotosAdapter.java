@@ -59,7 +59,11 @@ public class PhotosAdapter extends BaseAdapter {
                 }
         );
         File f = new File(getItem(position));
-        Picasso.get().load(f).fit().centerInside().into(img);
+        if (!f.exists()) {
+            Picasso.get().load("http://10.0.2.2:4567/getimage/" + f.getName()).fit().centerInside().into(img);
+        } else {
+            Picasso.get().load(f).fit().centerInside().into(img);
+        }
         return view;
     }
 

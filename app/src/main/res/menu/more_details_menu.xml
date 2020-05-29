@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Изменить"
+        android:id="@+id/menu_change_button"></item>
+
+    <item android:title="Удалить"
+        android:id="@+id/menu_delete_button"></item>
+
+</menu>

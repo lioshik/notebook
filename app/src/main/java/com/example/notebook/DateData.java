@@ -1,7 +1,18 @@
 package com.example.notebook;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class DateData {
-    public int year, month, day;
+    @SerializedName("year")
+    @Expose
+    public int year;
+    @SerializedName("month")
+    @Expose
+    public int month;
+    @SerializedName("day")
+    @Expose
+    public int day;
 
     public DateData(int year, int month, int day) {
         this.year = year;

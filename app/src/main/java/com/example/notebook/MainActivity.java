@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -21,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,14 +37,15 @@ public class MainActivity extends AppCompatActivity {
     public static final int RESULT_NEED_CHANGE = 3;
     public static final int RESULT_NEED_DELETE = 4;
     public static final int REQUEST_SEE_MORE_INFO = 5;
+    public static final int REQUEST_CHANGE_SUBJ_LIST = 6;
 
-    private ListView lw;
-    private List<String> subjects;
-    private HashMap<String, Boolean> map;
-    private List<Homework> list;
+    public static ListView lw;
+    public static List<String> subjects;
+    private static HashMap<String, Boolean> map;
+    public static List<Homework> list;
     public static List<Homework> AllData;
-    private DateData dedline;
-    private final DateData dedlinedefault = new DateData(9999, 10, 10);
+    private static DateData dedline;
+    private static final DateData dedlinedefault = new DateData(9999, 10, 10);
     private Button btndedline;
     private Button subjchose;
     private Button btnremovesubjfilter;
@@ -53,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Мои задания");
-        lw = (ListView) findViewById(R.id.listview);
+        lw = (ListView) findViewById(R.id.listviewwithSubj);
         list = new ArrayList<Homework>();
         AllData = new ArrayList<Homework>();
         map = new HashMap<String, Boolean>();
@@ -98,26 +102,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        subjects.add("Алгебра");
-        subjects.add("Биология");
-        subjects.add("Английский");
-        subjects.add("Немецкий");
-        subjects.add("Французский");
-        subjects.add("География");
-        subjects.add("Геометрия");
-        subjects.add("История");
-        subjects.add("Информатика");
-        subjects.add("Литература");
-        subjects.add("ОБЖ");
-        subjects.add("Обществознание");
-        subjects.add("Физика");
-        subjects.add("Русский");
-        subjects.add("Химия");
-
         for (int i = 0; i < subjects.size(); i++) {
             map.put(subjects.get(i), true);
         }
         updateList();
+    }
+
+    public void updateSubjList() {
+        for (int i = 0; i < AllData.size(); i++) {
+            if (!subjects.contains(AllData.get(i).subj)) {
+                AllData.remove(i);
+            }
+        }
+        for (int i = 0; i < subjects.size(); i++) {
+            if (map.get(subjects.get(i)) == null) {
+                map.put(subjects.get(i), true);
+            }
+        }
+        updateList();
+    }
+
+    public void onClickChangeSubj() {
+        Intent i = new Intent(MainActivity.this, SubjectChoosingActivity.class);
+        String[] kostyl = new String[subjects.size()];
+        for (int j = 0; j < subjects.size(); j++) {
+            kostyl[j] = subjects.get(j);
+        }
+        i.putExtra("Subjects", kostyl);
+        startActivityForResult(i, REQUEST_CHANGE_SUBJ_LIST);
     }
 
     @Override
@@ -137,6 +149,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Ошибка при загрузке данных", Toast.LENGTH_LONG);
             } else {
                 int sz = Integer.parseInt(firstline);
+                for (int i = 0; i < sz; i++) {
+                    subjects.add(reader.readLine());
+                }
+                sz = Integer.parseInt(reader.readLine());
                 for (int i = 0; i < sz; i++) {
                     String sbj = reader.readLine();
                     String[] datestr = reader.readLine().split(" ");
@@ -159,10 +175,29 @@ public class MainActivity extends AppCompatActivity {
                     AllData.add(hw);
                 }
             }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
+            subjects.add("Алгебра");
+            subjects.add("Биология");
+            subjects.add("Английский");
+            subjects.add("Немецкий");
+            subjects.add("Французский");
+            subjects.add("География");
+            subjects.add("Геометрия");
+            subjects.add("История");
+            subjects.add("Информатика");
+            subjects.add("Литература");
+            subjects.add("ОБЖ");
+            subjects.add("Обществознание");
+            subjects.add("Физика");
+            subjects.add("Русский");
+            subjects.add("Химия");
+            for (int i = 0; i < subjects.size(); i++) {
+                map.put(subjects.get(i), true);
+            }
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        for (int i = 0; i < subjects.size(); i++) {
+            map.put(subjects.get(i), true);
         }
     }
 
@@ -216,6 +251,14 @@ public class MainActivity extends AppCompatActivity {
                         updateList();
                         break;
                 }
+                break;
+            case REQUEST_CHANGE_SUBJ_LIST:
+                try {
+                    subjects = Arrays.asList(data.getStringArrayExtra("Subjects"));
+                    updateSubjList();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
         }
     }
 
@@ -224,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickAdd(View v) {
-        Intent i = new Intent(this, New_homework.class);
+        Intent i = new Intent(MainActivity.this, New_homework.class);
         String[] kostyl = new String[subjects.size()];
         for (int j = 0; j < subjects.size(); j++) {
             kostyl[j] = subjects.get(j);
@@ -233,6 +276,123 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("RequestCode", REQUEST_NEW_HW);
 
         startActivityForResult(i, REQUEST_NEW_HW);
+        /*
+        startActivityForResult(i, REQUEST_NEW_HW);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Новая запись");
+        String[] actions = {"Создать новую", "Импортировать существующую", "Отмена"};
+        builder.setItems(actions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch(which) {
+                    case 0:
+                        Intent i = new Intent(MainActivity.this, New_homework.class);
+                        String[] kostyl = new String[subjects.size()];
+                        for (int j = 0; j < subjects.size(); j++) {
+                            kostyl[j] = subjects.get(j);
+                        }
+                        i.putExtra("Subjects", kostyl);
+                        i.putExtra("RequestCode", REQUEST_NEW_HW);
+
+                        startActivityForResult(i, REQUEST_NEW_HW);
+                        break;
+                    case 1:
+                        AlertDialog.Builder codeDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                        codeDialogBuilder.setTitle("Введите код");
+                        final EditText input = new EditText(MainActivity.this);
+                        input.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        codeDialogBuilder.setView(input);
+                        codeDialogBuilder.setNegativeButton("отмена", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        codeDialogBuilder.setPositiveButton("ок", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String serverUrl = "http://10.0.2.2:4567/";
+                                Gson gson = new GsonBuilder()
+                                        .setLenient()
+                                        .create();
+
+                                final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                                        .build();
+
+                                Retrofit retrofit = new Retrofit.Builder()
+                                        .baseUrl(serverUrl)
+                                        .client(okHttpClient)
+                                        .addConverterFactory(GsonConverterFactory.create(gson))
+                                        .build();
+                                APIservice apiService = retrofit.create(APIservice.class);
+                                Call<Homework> getHwFromServer = apiService.loadHomework(input.getText().toString());
+                                getHwFromServer.enqueue(new Callback<Homework>() {
+                                    @Override
+                                    public void onResponse(Call<Homework> call, final Response<Homework> response) {
+                                        if (response.isSuccessful()) {
+                                            AllData.add(response.body());
+                                            updateList();
+                                            for (int i = 0; i < response.body().photos.size(); i++) {
+                                                final int finalI = i;
+                                                Thread thread = new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try  {
+                                                            final File outputDir = new File(response.body().photos.get(finalI));
+                                                            if (!outputDir.exists()) {
+                                                                try {
+                                                                    outputDir.createNewFile();
+                                                                } catch (IOException e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                                Log.d("sas", "http://10.0.2.2:4567/getimage/" + outputDir.getName());
+                                                                try {
+                                                                    URL url = new URL("http://10.0.2.2:4567/getimage/" + outputDir.getName());
+                                                                    InputStream inputStream = url.openStream();
+                                                                    byte[] buffer = new byte[20000000];
+                                                                    int bytesRead = 0;
+                                                                    OutputStream output = new FileOutputStream(outputDir.getAbsolutePath());
+                                                                    while ((bytesRead = inputStream.read(buffer, 0, buffer.length)) >= 0) {
+                                                                        output.write(buffer, 0, bytesRead);
+                                                                    }
+                                                                    output.close();
+                                                                    inputStream.close();
+                                                                } catch (MalformedURLException e) {
+                                                                    e.printStackTrace();
+                                                                } catch (IOException e) {
+                                                                    e.printStackTrace();
+                                                                }
+
+                                                            }
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+                                                thread.start();
+                                            }
+                                            Toast toast = Toast.makeText(MainActivity.this, "добавлено", Toast.LENGTH_SHORT);
+                                            toast.show();
+                                        } else {
+                                            Toast toast = Toast.makeText(MainActivity.this, "ошибка", Toast.LENGTH_SHORT);
+                                            toast.show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Homework> call, Throwable t) {
+                                        Toast toast = Toast.makeText(MainActivity.this, "ошибка", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+                                });
+                            }
+                        });
+                        codeDialogBuilder.show();
+                }
+            }
+        });
+        android.app.AlertDialog dialog = builder.create();
+        dialog.show();*/
     }
 
     public static int pos; //костыль
@@ -353,7 +513,7 @@ public class MainActivity extends AppCompatActivity {
         updateList();
     }
 
-    private void updateList() {
+    public void updateList() {
         list.clear();
         for (int i = 0; i < AllData.size(); i++) {
             Log.d("sas", AllData.get(i).date.getString() + "   " + dedline.getString());
@@ -375,6 +535,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
         lw.setAdapter(new HomeworkAdapter(this, list));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.menu_exit:
+                finish();
+                break;
+            case R.id.menu_push_button:
+                break;
+            case R.id.menu_subj_list:
+                onClickChangeSubj();
+                break;
+        }
+        return true;
     }
 
 }

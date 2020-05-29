@@ -33,6 +33,10 @@ public class SaveService extends Service {
     public void saveData(){
         try {
             FileOutputStream output = openFileOutput("saveData", MODE_PRIVATE);
+            output.write((Integer.toString(MainActivity.subjects.size()) + "\n").getBytes());
+            for (int i = 0; i < MainActivity.subjects.size(); i++) {
+                output.write((MainActivity.subjects.get(i) + "\n").getBytes());
+            }
             output.write((Integer.toString(MainActivity.AllData.size()) + "\n").getBytes());
             for (int i = 0; i < MainActivity.AllData.size(); i++) {
                 output.write((MainActivity.AllData.get(i).subj + "\n").getBytes());

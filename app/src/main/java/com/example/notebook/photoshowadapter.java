@@ -1,6 +1,7 @@
 package com.example.notebook;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,11 @@ public class PhotoShowAdapter extends BaseAdapter {
         }
         ImageView img = (ImageView)view.findViewById(R.id.imgshowphoto);
         File f = new File(getItem(position));
-        Picasso.get().load(f).fit().centerInside().into(img);
+        if (!f.exists()) {
+            Picasso.get().load("http://10.0.2.2:4567/getimage/" + f.getName()).fit().centerInside().into(img);
+        } else {
+            Picasso.get().load(f).fit().centerInside().into(img);
+        }
         return view;
     }
 }

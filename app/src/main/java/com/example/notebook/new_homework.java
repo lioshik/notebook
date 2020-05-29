@@ -8,9 +8,12 @@ import androidx.core.content.FileProvider;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,12 +31,17 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import okhttp3.internal.Util;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -53,6 +61,7 @@ public class New_homework extends AppCompatActivity{
     public static final int REQUEST_PHOTO = 1337;
     public static final int REQUEST_SHOW_PHOTO = 1432;
     public static final int REQUEST_CHANGE_PHOTO = 1435;
+    public static final int REQUEST_PICK_PHOTO = 15372;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,9 +155,47 @@ public class New_homework extends AppCompatActivity{
             for (int i = 0; i < data.getStringArrayExtra("photos").length; i++){
                 photos.add(data.getStringArrayExtra("photos")[i]);
             }
+        } else if (requestCode == REQUEST_PICK_PHOTO) {
+            try {
+                photos.add(saveBitmapIntoSDCardImage(this, getContactBitmapFromURI(this, data.getData())));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
+    public String saveBitmapIntoSDCardImage(Context context, Bitmap finalBitmap) throws IOException {
+
+        File destination = createImageFile();
+
+        try {
+            FileOutputStream out = new FileOutputStream(destination);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  destination.getAbsolutePath();
+    }
+
+    public Bitmap getContactBitmapFromURI(Context context, Uri uri) {
+        try {
+
+            InputStream input = context.getContentResolver().openInputStream(uri);
+            if (input == null) {
+                return null;
+            }
+            return BitmapFactory.decodeStream(input);
+        }
+        catch (FileNotFoundException e)
+        {
+
+        }
+        return null;
+
+    }
 
     @Override
     protected void onDestroy() {
@@ -215,22 +262,38 @@ public class New_homework extends AppCompatActivity{
 
     public void onclickAddphoto(View v){
         requestPermissions();
-        try {
-            File saveFile = createImageFile();
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            outputFileUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", saveFile);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            startActivityForResult(intent, REQUEST_PHOTO);
-        } catch (ActivityNotFoundException e) {
-            String errorMessage = "Ваше устройство не поддерживает работу с камерой!";
-            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-            toast.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            String errorMessage = "Ошибка при сохранении файла";
-            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-            toast.show();
-        }
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        CharSequence[] items = {"Сделать фото", "Загрузить из галлереи"};
+        dialog.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    try {
+                        File saveFile = createImageFile();
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        outputFileUri = FileProvider.getUriForFile(New_homework.this, "com.example.android.fileprovider", saveFile);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                        startActivityForResult(intent, REQUEST_PHOTO);
+                    } catch (ActivityNotFoundException e) {
+                        String errorMessage = "Ваше устройство не поддерживает работу с камерой!";
+                        Toast toast = Toast.makeText(New_homework.this, errorMessage, Toast.LENGTH_SHORT);
+                        toast.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        String errorMessage = "Ошибка при сохранении файла";
+                        Toast toast = Toast.makeText(New_homework.this, errorMessage, Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                } else {
+                    Intent intent=new Intent(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    String[] mimeTypes = {"image/jpeg", "image/png"};
+                    intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
+                    startActivityForResult(intent, REQUEST_PICK_PHOTO);
+                }
+            }
+        });
+        dialog.show();
     }
 
     String currentPhotoPath;

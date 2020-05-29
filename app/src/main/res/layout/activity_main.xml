@@ -9,7 +9,7 @@
 
 
     <ListView
-        android:id="@+id/listview"
+        android:id="@+id/listviewwithSubj"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
@@ -107,7 +107,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listview"
+        app:layout_constraintTop_toBottomOf="@+id/listviewwithSubj"
         app:srcCompat="@color/listbackground" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
